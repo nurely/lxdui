@@ -13,7 +13,11 @@ class LXDModule(Base):
     # Default 127.0.0.1 -> Move to Config
     def __init__(self, remoteHost='127.0.0.1'):
         logging.info('Accessing PyLXD client')
-        self.client = Client()
+
+        remoteHost = Config().get(meta.APP_NAME, '{}.lxd.remote'.format(meta.APP_NAME.lower()))
+        verify = Config().get(meta.APP_NAME, '{}.lxd.sslverify'.format(meta.APP_NAME.lower()))
+
+        self.client = Client(endpoint=remoteHost, verify=verify)
 
     def listContainers(self):
         try:
@@ -194,3 +198,4 @@ class LXDModule(Base):
 
     def snapshot(self):
         raise NotImplementedError()
+
