@@ -14,8 +14,12 @@ class LXDModule(Base):
     def __init__(self, remoteHost='127.0.0.1'):
         logging.info('Accessing PyLXD client')
 
-        remoteHost = Config().get(meta.APP_NAME, '{}.lxd.remote'.format(meta.APP_NAME.lower()))
-        verify = Config().get(meta.APP_NAME, '{}.lxd.sslverify'.format(meta.APP_NAME.lower()))
+        try:
+            remoteHost = Config().get(meta.APP_NAME, '{}.lxd.remote'.format(meta.APP_NAME.lower()))
+            verify = Config().get(meta.APP_NAME, '{}.lxd.sslverify'.format(meta.APP_NAME.lower()))
+        except:
+            pass
+
 
         self.client = Client(endpoint=remoteHost, verify=verify)
 
