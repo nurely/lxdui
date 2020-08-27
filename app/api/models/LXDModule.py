@@ -12,16 +12,18 @@ logging = logging.getLogger(__name__)
 class LXDModule(Base):
     # Default 127.0.0.1 -> Move to Config
     def __init__(self, remoteHost='127.0.0.1'):
+        verify = True
         logging.info('Accessing PyLXD client')
 
         try:
             remoteHost = Config().get(meta.APP_NAME, '{}.lxd.remote'.format(meta.APP_NAME.lower()))
-            verify = Config().get(meta.APP_NAME, '{}.lxd.sslverify'.format(meta.APP_NAME.lower()))
+            verify = False if Config().get(meta.APP_NAME, '{}.lxd.sslverify'.format(meta.APP_NAME.lower())) == 'false' else True
         except:
             pass
 
 
-        self.client = Client(endpoint=remoteHost, verify=verify)
+        self.client = Client(endpoint=remoteHost, verify=verify, cert=None)
+        print('hello')
 
     def listContainers(self):
         try:
