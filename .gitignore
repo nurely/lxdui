@@ -8,4 +8,4 @@ LXDUI.egg-info
 logs/
 conf/lxdui.conf
 snap/
-__metadata__.py
+app/__metadata__.py
