@@ -47,6 +47,10 @@
                     <a href="#3" class="tab-background" id="btnRemoteImages" aria-expanded="false" data-toggle="tab">Remote <span
                             class="badge">{{remoteImages|length}}</span></a>
                 </li>
+                <li>
+                    <a href="#3" class="tab-background" id="btnRemotePaesslerImages" aria-expanded="false" data-toggle="tab">Remote Paessler <span
+                            class="badge">{{remotePaesslerImages|length}}</span></a>
+                </li>
                 <!--<a href="" class="btn btn-default btn-xs buttonAddRemoteModal" data-toggle="modal" data-target="#addRemoteModal">-->
                 <!--<span class="glyphicon glyphicon-plus-sign"></span></a>-->
             </ul>
@@ -287,6 +291,83 @@
                         </div>
                     </div>
                 </div> <!--col-sm-12 end-->
+
+                <!-- REMOTE PAESSLER BLOCK !-->
+                <div class="tab-pane col-lg-12 col-md-12 col-sm-12 add-borders" id="3">
+                    <div class="col-sm-12 col-md-12 col-lg-12">
+                        <div class="col-lg-12" id="loader" style="display:none;">
+                            <div class="col-lg-offset-4 col-lg-4">
+                                <img src="static/images/loader.gif" class="text-center" width="150px">
+                            </div>
+                        </div>
+                        <h5 class="bg-bottom">
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <button id="buttonDownload" class="btn btn-success left" disabled><span
+                                            class="glyphicon glyphicon-download-alt"></span> Download
+                                    </button>
+                                    <div class="left">
+                                        <p class="remote-link">Remote: <a target="_blank"
+                                                                          href="{{ remotePaesslerImagesLink }}">{{ remotePaesslerImagesLink }}</a>
+                                        </p>
+                                    </div>
+                                    <div class="left">
+                                        <div class="form-group">
+                                            <div class="col-sm-4">
+                                                <select class="form-control" name="architecturePaesslerRemote" id="architecturePaess;erRemote">
+                                                    <option value="" selected>All</option>
+                                                    <option value="amd64">amd64/x86-64</option>
+                                                    <option value="i386">i386</option>
+                                                    <option value="arm64">arm64</option>
+                                                    <option value="armhf">armhf</option>
+                                                    <option value="armel">armel</option>
+                                                    <option value="s390x">s390x</option>
+                                                    <option value="ppc64el">ppc64el</option>
+                                                </select>
+                                                <!--<input id="driver" name="driver" class="form-control" type="text" placeholder="Storage Pool Driver" title="Storage Pool Driver" required/>-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </h5>
+
+                        <!--<div class="col-lg-12" id="tableImagesRemoteWrapper" style="display:none;">-->
+                        <div class="col-lg-12" id="tablePaesslerImagesRemoteWrapper">
+                            <div class="">
+                                <table id="tablePaesslerImagesRemote"
+                                       class="table table-bordered table-responsive table-fixed width100">
+                                    <thead>
+                                    <th><input type="checkbox" id="selectAllRemotePaessler" class="width100"/></th>
+                                    <th>OS</th>
+                                    <th>Description</th>
+                                    <th>Alias</th>
+                                    <th>Ver</th>
+                                    <th>Arch</th>
+                                    </thead>
+                                    <tbody>
+                                    {% for image in remotePaesslerImages %}
+                                    <tr id="{{image.image}}">
+                                        <td></td>
+                                        <td><a class="pointer"
+                                               onClick="App.images.showRemoteDetails('{{image.image}}');"
+                                               data-keyboard="true">{{ image.name}}</a></td>
+                                        <td>{{ image.name|title }} {{ image.distribution }} ({{image.architecture}})
+                                        </td>
+                                        <td>{{ image.image }}</td>
+                                        <td>{{ image.distribution }}</td>
+                                        <td>{{ image.architecture }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!--col-sm-12 end-->
+                <!-- REMOTE PAESSLER BLOCK !-->
+
+
                 <div class="tab-pane col-lg-12 col-md-12 col-sm-12 add-borders" id="4">
                     <div class="col-sm-12 col-md-12 col-lg-12">
 
