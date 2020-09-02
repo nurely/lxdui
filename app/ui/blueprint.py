@@ -135,10 +135,9 @@ def getRemoteImages():
 
     return remoteImages
 
-
 def getRemotePaesslerImages():
     try:
-        remotePaesslerImages = LXDModule().listRemotePaesslerImages()
+        remotePaesslerImages = LXDModule(remoteImage=True).listRemotePaesslerImages()
     except:
         remotePaesslerImages = []
 

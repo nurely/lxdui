@@ -4,18 +4,6 @@ from app.api.models.LXDModule import LXDModule
 
 import logging
 
-def getLXDInfo():
-    try:
-        info = LXDModule().config()
-        return info
-    except:
-        return {
-            'environment': {
-                'server_version': 'N/A'
-            },
-            'api_status': 'N/A'
-        }
-
 def readInstanceDetails():
     instanceDetails = ("Python Version: {}".format(platform.python_version()))
     instanceDetails +=("\nPython Path: {}".format(' '.join(path for path in sys.path)))
@@ -28,6 +16,18 @@ def readInstanceDetails():
     instanceDetails +=("\nDisk used percent: {}".format(getDiskDetails()))
     logging.info(instanceDetails)
 
+
+def getLXDInfo():
+    try:
+        info = LXDModule().config()
+        return info
+    except:
+        return {
+            'environment': {
+                'server_version': 'N/A'
+            },
+            'api_status': 'N/A'
+        }
 
 def getMemory():
     return int(psutil.virtual_memory().total / (1024*1024))
