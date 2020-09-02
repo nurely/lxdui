@@ -3,6 +3,7 @@
 <script>
     var constLocalImages = {{jsData.local|safe}} || {};
     var constRemoteImages = {{jsData.remote|safe}} || {};
+    var constRemotePaesslerImages = {{jsData.remotePaessler|safe}} || {};
 
 
 </script>
@@ -48,7 +49,7 @@
                             class="badge">{{remoteImages|length}}</span></a>
                 </li>
                 <li>
-                    <a href="#3" class="tab-background" id="btnRemotePaesslerImages" aria-expanded="false" data-toggle="tab">Remote Paessler <span
+                    <a href="#4" class="tab-background" id="btnRemotePaesslerImages" aria-expanded="false" data-toggle="tab">Remote Paessler <span
                             class="badge">{{remotePaesslerImages|length}}</span></a>
                 </li>
                 <!--<a href="" class="btn btn-default btn-xs buttonAddRemoteModal" data-toggle="modal" data-target="#addRemoteModal">-->
@@ -293,7 +294,7 @@
                 </div> <!--col-sm-12 end-->
 
                 <!-- REMOTE PAESSLER BLOCK !-->
-                <div class="tab-pane col-lg-12 col-md-12 col-sm-12 add-borders" id="3">
+                <div class="tab-pane col-lg-12 col-md-12 col-sm-12 add-borders" id="4">
                     <div class="col-sm-12 col-md-12 col-lg-12">
                         <div class="col-lg-12" id="loader" style="display:none;">
                             <div class="col-lg-offset-4 col-lg-4">
@@ -314,7 +315,7 @@
                                     <div class="left">
                                         <div class="form-group">
                                             <div class="col-sm-4">
-                                                <select class="form-control" name="architecturePaesslerRemote" id="architecturePaess;erRemote">
+                                                <select class="form-control" name="architecturePaesslerRemote" id="architecturePaesslerRemote">
                                                     <option value="" selected>All</option>
                                                     <option value="amd64">amd64/x86-64</option>
                                                     <option value="i386">i386</option>
@@ -338,7 +339,7 @@
                                 <table id="tablePaesslerImagesRemote"
                                        class="table table-bordered table-responsive table-fixed width100">
                                     <thead>
-                                    <th><input type="checkbox" id="selectAllRemotePaessler" class="width100"/></th>
+                                    <th><input type="checkbox" id="selectAllPaesslerRemote" class="width100"/></th>
                                     <th>OS</th>
                                     <th>Description</th>
                                     <th>Alias</th>
@@ -350,7 +351,7 @@
                                     <tr id="{{image.image}}">
                                         <td></td>
                                         <td><a class="pointer"
-                                               onClick="App.images.showRemoteDetails('{{image.image}}');"
+                                               onClick="App.images.showRemotePaesslerDetails('{{image.image}}');"
                                                data-keyboard="true">{{ image.name}}</a></td>
                                         <td>{{ image.name|title }} {{ image.distribution }} ({{image.architecture}})
                                         </td>

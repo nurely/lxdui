@@ -3,9 +3,11 @@ App.images = App.images || {
     loading: false,
     data: [],
     remoteData: [],
+    remotePaesslerData: [],
     activeTab:'local',
     tableLocal: null,
     tableRemote: null,
+    tablePaesslerRemote: null,
     tableNightly: null,
     tableSettings: {
         searching:true,
@@ -47,12 +49,14 @@ App.images = App.images || {
     init: function(opts){
         this.data = constLocalImages || [];
         this.remoteData = constRemoteImages || [];
+        this.remotePaesslerData = constRemotePaesslerImages || [];
         this.containerTemplate = $('.multiContainerTemplate');
         this.rawJson = ace.edit('rawJson');
         this.rawJson.session.setMode('ace/mode/json');
         this.rawJson.setOptions({readOnly: true});
         $('#btnLocalImages').on('click', $.proxy(this.switchView, this, 'localList'));
         $('#btnRemoteImages').on('click', $.proxy(this.switchView, this, 'remoteList'));
+        $('#btnRemotePaesslerImages').on('click', $.proxy(this.switchView, this, 'remotePaesslerList'));
         $('#btnNightlyImages').on('click', $.proxy(this.switchView, this, 'nightlyList'));
 
         $('#buttonUpdate').on('click', $.proxy(this.getData, this));
@@ -68,14 +72,17 @@ App.images = App.images || {
         $('.imageSize').each(this.convertImageSize);
         this.initLocalTable();
         this.initRemoteTable();
+        this.initRemotePaesslerTable();
         this.initNightlyTable();
         $('#selectAllLocal').on('change', $.proxy(this.toggleSelectAll, this, 'Local'));
         $('#selectAllRemote').on('change', $.proxy(this.toggleSelectAll, this, 'Remote'));
+        $('#selectAllPaesslerRemote').on('change', $.proxy(this.toggleSelectAll, this, 'PaesslerRemote'));
         this.itemTemplate = $('.itemTemplate').clone();
         $('#modalDownloadButton').on('click', $.proxy(this.doDownload, this));
         $('#exTab2 > ul > li:nth-child(1)').addClass('active');// set first tab as active
 
         $('#architectureRemote').on('change', $.proxy(this.filterRemoteTable, this));
+        $('#architecturePaesslerRemote').on('change', $.proxy(this.filterPaesslerRemoteTable, this));
         $('#architectureNightly').on('change', $.proxy(this.filterNightlyTable, this));
 
         this.initKeyValuePairs();
@@ -89,8 +96,10 @@ App.images = App.images || {
         $('#loader')[tempLoaderState]();
         if(this.activeTab == 'local')
             return $('#tableImagesLocalWrapper')[tempTableState]();
-        else
+        else if (this.activeTab=='remote')
             return $('#tableImagesRemoteWrapper')[tempTableState]();
+        else if (this.activeTab=='remotePaessler')
+            return $('#tablePaesslerImagesRemoteWrapper')[tempTableState]();
     },
     initKeyValuePairs: function() {
         for (key in App.properties.keyValues) {
@@ -131,9 +140,17 @@ App.images = App.images || {
         this.tableRemote =$('#tableImagesRemote').DataTable(App.mergeProps(this.tableSettings, {rowId: 'image'}));
         this.setRemoteTableEvents();
     },
+    initRemotePaesslerTable: function(){
+        this.tablePaesslerRemote =$('#tablePaesslerImagesRemote').DataTable(App.mergeProps(this.tableSettings, {rowId: 'image'}));
+        this.setPaesslerRemoteTableEvents();
+    },
     setRemoteTableEvents: function(){
         this.tableRemote.on('select', $.proxy(this.onItemSelectChange, this));
         this.tableRemote.on('deselect', $.proxy(this.onItemSelectChange, this));
+    },
+    setPaesslerRemoteTableEvents: function(){
+        this.tablePaesslerRemote.on('select', $.proxy(this.onItemSelectChange, this));
+        this.tablePaesslerRemote.on('deselect', $.proxy(this.onItemSelectChange, this));
     },
     initNightlyTable: function(){
         this.tableNightly =$('#tableImagesNightly').DataTable(App.mergeProps(this.tableSettings, {rowId: 'fingerprint'}));
@@ -145,6 +162,9 @@ App.images = App.images || {
     },
     filterRemoteTable: function(e) {
         this.tableRemote.search(e.target.value).draw();
+    },
+    filterPaesslerRemoteTable: function(e) {
+        this.tablePaesslerRemote.search(e.target.value).draw();
     },
     filterNightlyTable: function(e) {
         this.tableNightly.search(e.target.value).draw();
@@ -163,6 +183,13 @@ App.images = App.images || {
             var visibility= !state?'attr':'removeAttr';
             $('#buttonDownload')[visibility]('disabled', 'disabled');
             $('#selectAllRemote').prop('checked',this.tableRemote.rows({selected:true}).count()==this.tableRemote.rows().count());
+            return;
+        }
+        if(this.activeTab=='remotePaessler'){
+            var state = this.tablePaesslerRemote.rows({selected:true}).count()>0
+            var visibility= !state?'attr':'removeAttr';
+            $('#buttonDownload')[visibility]('disabled', 'disabled');
+            $('#selectAllRemotePaessler').prop('checked',this.tablePaesslerRemote.rows({selected:true}).count()==this.tablePaesslerRemote.rows().count());
             return;
         }
         if(this.activeTab=='nightly'){
@@ -220,6 +247,20 @@ App.images = App.images || {
                 });
                 this.tableRemote.row('#'+row['image']).remove().draw(false);
             }.bind(this));
+        } else if(activeTab=='remotePaessler') {
+            this.tableRemote.rows({selected: true}).data().map(function(row){
+                $.ajax({
+                    url:App.baseAPI+'image/remotePaessler',
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        image:row['image']
+                    }),
+                    success: $.proxy(this.onDownloadSuccess, this, row['image'])
+                });
+                this.tableRemote.row('#'+row['image']).remove().draw(false);
+            }.bind(this));
         }
     },
     onDownloadSuccess: function(imageName, response){
@@ -232,6 +273,8 @@ App.images = App.images || {
             //return $.get(App.baseAPI+'image', $.proxy(this.getDataSuccess, this));
         if(this.activeTab=='remote')
             return $.get(App.baseAPI+'image/remote', $.proxy(this.getDataSuccess, this));
+        if(this.activeTab=='remotePaessler')
+            return $.get(App.baseAPI+'image/remotePaessler', $.proxy(this.getDataSuccess, this));
     },
     getDataJSON: function(){
         //this.setLoading(true);
@@ -239,6 +282,8 @@ App.images = App.images || {
             return $.get(App.baseAPI+'image', $.proxy(this.getDataSuccess, this));
         if(this.activeTab=='remote')
             return $.get(App.baseAPI+'image/remote', $.proxy(this.getDataSuccess, this));
+        if(this.activeTab=='remotePaessler')
+            return $.get(App.baseAPI+'image/remotePaessler', $.proxy(this.getDataSuccess, this));
        if(this.activeTab=='nightly')
             return $.get(App.baseAPI+'image/remote/nightly/list', $.proxy(this.getDataSuccess, this));
     },
@@ -249,6 +294,7 @@ App.images = App.images || {
         if(screen==='local'){
             $('#tableImagesLocalWrapper').show();
             $('#tableImagesRemoteWrapper').hide();
+            $('#tablePaesslerImagesRemoteWrapper').hide();
             $('#buttonDelete').show();
             $('#buttonLaunchContainers').show();
             $('.local-tab-action-buttons').show();
@@ -260,11 +306,23 @@ App.images = App.images || {
         if(screen==='remote'){
             $('#tableImagesLocalWrapper').hide();
             $('#tableImagesRemoteWrapper').show();
+            $('#tablePaesslerImagesRemoteWrapper').hide();
             $('#buttonLaunchContainers').hide();
             $('#buttonJSONRaw').hide();
             $('#buttonDownload').show();
             $('#buttonDelete').hide();
             this.activeTab = 'remote';
+            return;
+        }
+        if(screen==='remotePaessler'){
+             $('#tableImagesLocalWrapper').hide();
+            $('#tableImagesRemoteWrapper').hide();
+            $('#tablePaesslerImagesRemoteWrapper').show();
+            $('#buttonLaunchContainers').hide();
+            $('#buttonJSONRaw').hide();
+            $('#buttonDownload').show();
+            $('#buttonDelete').hide();
+            this.activeTab = 'remotePaessler';
             return;
         }
         if(screen=='nightly') {
@@ -310,6 +368,22 @@ App.images = App.images || {
             ]
         }));
     },
+    updateRemotePaesslerTable: function(jsonData){
+        this.remotePaesslerData = jsonData;
+        this.tableRemote.clear();
+        this.tableRemote.destroy();
+        this.tableRemote=$('#tablePaesslerImagesRemote').DataTable(App.mergeProps(this.tableSettings, {
+            rowId:'image',
+            data : this.remotePaesslerData,
+            columns : [
+                { title:'Select', data: null, defaultContent:''},
+                { title: 'Distribution', data : 'distribution' },
+                { title: 'Architecture', data : 'architecture' },
+                { title: 'Image', data : 'image' },
+                { title: 'Name', data : 'name' }
+            ]
+        }));
+    },
     getDataSuccess: function(response){
         this.setLoading(false);
         this.rawJson.setValue(JSON.stringify(response.data, null , '\t'));
@@ -332,6 +406,9 @@ App.images = App.images || {
     },
     getRemoteData: function(){
         $.get(App.baseAPI+'image/remote', $.proxy(this.getDataSuccess, this));
+    },
+    getPaesslerRemoteData: function(){
+        $.get(App.baseAPI+'image/remotePaessler', $.proxy(this.getDataSuccess, this));
     },
     generateContainerFormSection: function(image, pos){
         var tempSection = this.containerTemplate.clone();
@@ -409,6 +486,7 @@ App.images = App.images || {
         $('#createMultipleContainersForm')[view=='form'?'show':'hide']();
         $('#tableImagesLocalWrapper')[view=='localList'?'show':'hide']();
         $('#tableImagesRemoteWrapper')[view=='remoteList'?'show':'hide']();
+        $('#tablePaesslerImagesRemoteWrapper')[view=='remotePaesslerList'?'show':'hide']();
         if(view!=='form'){
             $('.image-tabs').removeClass('hidden');
             $('#multiContainerSection').empty();
@@ -417,6 +495,9 @@ App.images = App.images || {
         }
         if(view=='remoteList'){
             return this.activateScreen('remote');
+        }
+        if(view=='remotePaesslerList'){
+            return this.activateScreen('remotePaessler');
         }
         if(view=='localList'){
             return this.activateScreen('local');
@@ -519,6 +600,11 @@ App.images = App.images || {
         this.tableRemote.rows().deselect();
         this.tableRemote.rows('#'+image).select();
         $.get(App.baseAPI+'image/remote/details?alias='+image, $.proxy(this.onGetRemoteDetailsSuccess, this));
+    },
+    showRemotePaesslerDetails: function(image){
+        this.tableRemote.rows().deselect();
+        this.tableRemote.rows('#'+image).select();
+        $.get(App.baseAPI+'image/remotePaessler/details?alias='+image, $.proxy(this.onGetRemoteDetailsSuccess, this));
     },
     showNightlyDetails: function(image, fingerprint) {
         this.tableNightly.rows().deselect();
