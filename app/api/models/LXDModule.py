@@ -11,7 +11,7 @@ logging = logging.getLogger(__name__)
 
 class LXDModule(Base):
     # Default 127.0.0.1 -> Move to Config
-    def __init__(self, remoteHost='127.0.0.1', remoteImage=None):
+    def __init__(self, remoteHost='127.0.0.1'):
         verify = True
         logging.info('Accessing PyLXD client')
 
@@ -21,12 +21,6 @@ class LXDModule(Base):
         except:
             pass
 
-        if remoteImage == True:
-            try:
-                remoteHost = Config().get(meta.APP_NAME, '{}.images.remote-paessler'.format(meta.APP_NAME.lower()))
-                verify = True
-            except:
-                pass
 
 
         self.client = Client(endpoint=remoteHost, verify=verify, cert=None)
@@ -68,7 +62,7 @@ class LXDModule(Base):
         try:
             remotePaesslerImagesLink = Config().get(meta.APP_NAME, '{}.images.remote-paessler'.format(meta.APP_NAME.lower()))
             logging.info('Reading remote image list')
-            remoteClient = Client(endpoint=remotePaesslerImagesLink, verify=True, cert=None)
+            remoteClient = Client(endpoint=remotePaesslerImagesLink)
             return remoteImagesList(remoteClient.api.images.aliases.get().json())
         except Exception as e:
             logging.error('Failed to get remote container images: ')
