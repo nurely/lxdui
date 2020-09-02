@@ -13,18 +13,18 @@ class LXDModule(Base):
     # Default 127.0.0.1 -> Move to Config
     def __init__(self, remoteHost='127.0.0.1'):
         logging.info('Accessing PyLXD client')
-        verify = True
+        verify = False
 
-        if remoteHost == '127.0.0.1':
-            if Config().get(meta.APP_NAME, '{}.lxd.remote.enable'.format(meta.APP_NAME.lower())) == 'true':
-                try:
-                    remoteHost = Config().get(meta.APP_NAME, '{}.lxd.remote'.format(meta.APP_NAME.lower()))
-                    verify = False if Config().get(meta.APP_NAME, '{}.lxd.sslverify'.format(meta.APP_NAME.lower())) == 'false' else True
-                except:
-                    pass
+        if Config().get(meta.APP_NAME, '{}.lxd.remote.enable'.format(meta.APP_NAME.lower())) == 'true':
+            try:
+                remoteHost = Config().get(meta.APP_NAME, '{}.lxd.remote'.format(meta.APP_NAME.lower()))
+                verify = False if Config().get(meta.APP_NAME, '{}.lxd.sslverify'.format(meta.APP_NAME.lower())) == 'false' else True
+            except:
+                pass
+            self.client = Client(endpoint=remoteHost, verify=verify, cert=None)
+        else:
+            self.Client()
 
-
-        self.client = Client(endpoint=remoteHost, verify=verify, cert=None)
 
     def listContainers(self):
         try:
