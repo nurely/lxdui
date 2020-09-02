@@ -53,7 +53,7 @@ def remote():
 @jwt_required()
 def remotePaessler():
     try:
-        client = LXDModule(remoteImage=True)
+        client = LXDModule()
         return response.replySuccess(client.listRemotePaesslerImages())
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
@@ -80,7 +80,7 @@ def remotePaesslerDetails():
         args = request.args
         if args['alias']:
             alias = args['alias']
-        client = LXDModule(remoteImage=True)
+        client = LXDModule()
         return response.replySuccess(client.detailsRemotePaesslerImage((alias)))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
