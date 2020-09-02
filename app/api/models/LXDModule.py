@@ -23,7 +23,7 @@ class LXDModule(Base):
                 pass
             self.client = Client(endpoint=remoteHost, verify=verify, cert=None)
         else:
-            self.client = Client()
+            self.client = Client(endpoint=remoteHost)
 
 
     def listContainers(self):
