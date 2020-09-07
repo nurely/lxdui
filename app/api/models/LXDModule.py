@@ -1,5 +1,6 @@
 from app.api.models.Base import Base
 from app.api.utils.remoteImageMapper import remoteImagesList
+
 from app.lib.conf import Config
 from app import __metadata__ as meta
 
@@ -13,7 +14,18 @@ class LXDModule(Base):
     # Default 127.0.0.1 -> Move to Config
     def __init__(self, remoteHost='127.0.0.1'):
         logging.info('Accessing PyLXD client')
-        self.client = Client()
+        verify = False
+
+        if Config().get(meta.APP_NAME, '{}.lxd.remote.enable'.format(meta.APP_NAME.lower())) == 'true':
+            try:
+                remoteHost = Config().get(meta.APP_NAME, '{}.lxd.remote'.format(meta.APP_NAME.lower()))
+                verify = False if Config().get(meta.APP_NAME, '{}.lxd.sslverify'.format(meta.APP_NAME.lower())) == 'false' else True
+            except:
+                pass
+            self.client = Client(endpoint=remoteHost, verify=False, cert=None)
+        else:
+            self.client = Client()
+
 
     def listContainers(self):
         try:
@@ -48,6 +60,18 @@ class LXDModule(Base):
             logging.exception(e)
             raise ValueError(e)
 
+    def listRemotePaesslerImages(self):
+        try:
+            remotePaesslerImagesLink = Config().get(meta.APP_NAME, '{}.images.remote-paessler'.format(meta.APP_NAME.lower()))
+            logging.info('Reading remote image list')
+            verify = False if Config().get(meta.APP_NAME, '{}.lxd.sslverify'.format(meta.APP_NAME.lower())) == 'false' else True
+            remoteClient = Client(endpoint=remotePaesslerImagesLink, verify=False)
+            return remoteImagesList(remoteClient.api.images.aliases.get().json())
+        except Exception as e:
+            logging.error('Failed to get remote container images: ')
+            logging.exception(e)
+            raise ValueError(e)
+
     def listNightlyImages(self):
         try:
             logging.info('Reading nightly remote image list')
@@ -67,11 +91,39 @@ class LXDModule(Base):
         except Exception as e:
             raise ValueError(e)
 
+    def detailsRemotePaesslerImage(self, alias):
+        try:
+            remotePaesslerImagesLink = Config().get(meta.APP_NAME, '{}.images.remote-paessler'.format(meta.APP_NAME.lower()))
+            verify = False if Config().get(meta.APP_NAME, '{}.lxd.sslverify'.format(meta.APP_NAME.lower())) == 'false' else True
+            remoteClient = Client(endpoint=remotePaesslerImagesLink, verify=False)
+            fingerprint = remoteClient.api.images.aliases[alias].get().json()['metadata']['target']
+            return remoteClient.api.images[fingerprint].get().json()['metadata']
+        except Exception as e:
+            raise ValueError(e)
+
+
     def downloadImage(self, image):
         try:
             remoteImagesLink = Config().get(meta.APP_NAME, '{}.images.remote'.format(meta.APP_NAME.lower()))
             logging.info('Downloading remote image:', image)
             remoteClient = Client(endpoint=remoteImagesLink)
+            try:
+                remoteImage = remoteClient.images.get_by_alias(image)
+            except:
+                remoteImage = remoteClient.images.get(image)
+            newImage = remoteImage.copy(self.client, auto_update=False, public=False, wait=True)
+            return self.client.api.images[newImage.fingerprint].get().json()['metadata']
+        except Exception as e:
+            logging.error('Failed to download image:')
+            logging.exception(e)
+            raise ValueError(e)
+
+    def downloadPaesslerImage(self, image):
+        try:
+            remotePaesslerImagesLink = Config().get(meta.APP_NAME, '{}.images.remote-paessler'.format(meta.APP_NAME.lower()))
+            logging.info('Downloading remote image:', image)
+            verify = False if Config().get(meta.APP_NAME,'{}.lxd.sslverify'.format(meta.APP_NAME.lower())) == 'false' else True
+            remoteClient = Client(endpoint=remotePaesslerImagesLink, verify=False)
             try:
                 remoteImage = remoteClient.images.get_by_alias(image)
             except:
@@ -194,3 +246,4 @@ class LXDModule(Base):
 
     def snapshot(self):
         raise NotImplementedError()
+

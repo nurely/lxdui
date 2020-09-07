@@ -16,6 +16,7 @@ def readInstanceDetails():
     instanceDetails +=("\nDisk used percent: {}".format(getDiskDetails()))
     logging.info(instanceDetails)
 
+
 def getLXDInfo():
     try:
         info = LXDModule().config()

@@ -49,6 +49,16 @@ def remote():
         return response.replyFailed(message=e.__str__())
 
 
+@image_api.route('/remotePaessler')
+@jwt_required()
+def remotePaessler():
+    try:
+        client = LXDModule()
+        return response.replySuccess(client.listRemotePaesslerImages())
+    except ValueError as e:
+        return response.replyFailed(message=e.__str__())
+
+
 @image_api.route('/remote/details')
 @jwt_required()
 def remoteDetails():
@@ -59,6 +69,19 @@ def remoteDetails():
             alias = args['alias']
         client = LXDModule()
         return response.replySuccess(client.detailsRemoteImage(alias))
+    except ValueError as e:
+        return response.replyFailed(message=e.__str__())
+
+@image_api.route('/remotePaessler/details')
+@jwt_required()
+def remotePaesslerDetails():
+    try:
+        alias = ''
+        args = request.args
+        if args['alias']:
+            alias = args['alias']
+        client = LXDModule()
+        return response.replySuccess(client.detailsRemotePaesslerImage(alias))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
 
@@ -83,5 +106,19 @@ def downloadImage():
     try:
         client = LXDModule()
         return response.replySuccess(client.downloadImage(input.get('image')), message='Image {} downloaded successfully.'.format(input.get('image')))
+    except ValueError as e:
+        return response.replyFailed(message=e.__str__())
+
+
+@image_api.route('/remotePaessler', methods=['POST'])
+@jwt_required()
+def downloadPaesslerImage():
+    input = request.get_json(silent=True)
+    validation = doValidate(input)
+    if validation:
+        return response.replyFailed(message=validation.message)
+    try:
+        client = LXDModule()
+        return response.replySuccess(client.downloadPaesslerImage(input.get('image')), message='Image {} downloaded successfully.'.format(input.get('image')))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())

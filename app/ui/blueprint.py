@@ -96,21 +96,27 @@ def images():
     localImages = getLocalImages()
     profiles = getProfiles()
     remoteImages = getRemoteImages()
+    remotePaesslerImages = getRemotePaesslerImages()
     nightlyImages = getNightlyImages()
     remoteImagesLink = Config().get(meta.APP_NAME, '{}.images.remote'.format(meta.APP_NAME.lower()))
+    remotePaesslerImagesLink = Config().get(meta.APP_NAME, '{}.images.remote-paessler'.format(meta.APP_NAME.lower()))
+
     return render_template('images.html', currentpage='Images',
                            localImages=localImages,
                            remoteImages=remoteImages,
+                           remotePaesslerImages=remotePaesslerImages,
                            nightlyImages=nightlyImages,
                            profiles=profiles,
                            jsData={
                                'local': json.dumps(localImages),
                                'remote': json.dumps(remoteImages),
+                               'remotePaessler': json.dumps(remotePaesslerImages),
                                'nightly': json.dumps(nightlyImages)
                            },
                            memory=memory(),
                            lxdui_current_version=VERSION,
-                           remoteImagesLink=remoteImagesLink)
+                           remoteImagesLink=remoteImagesLink,
+                           remotePaesslerImagesLink=remotePaesslerImagesLink)
 
 
 def getLocalImages():
@@ -128,6 +134,16 @@ def getRemoteImages():
         remoteImages = []
 
     return remoteImages
+
+
+def getRemotePaesslerImages():
+    try:
+        remotePaesslerImages = LXDModule().listRemotePaesslerImages()
+    except:
+        remotePaesslerImages = []
+
+    return remotePaesslerImages
+
 
 def getNightlyImages():
     try:
