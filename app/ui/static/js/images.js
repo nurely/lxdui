@@ -653,9 +653,10 @@ App.images = App.images || {
       var aliasesList = $('#aliasesList');
       tempData.aliases.forEach(function(alias, index){
             aliasesList.append('<div id="aliases" class="form-group"><b>Alias '+(index+1)+'</b></div>')
-           aliasesList.append(this.generateItem('Description',alias.description));
-           aliasesList.append(this.generateItem('Name',alias.name));
-           aliasesList.append(this.generateItem('Target',alias.target));
+           aliasesList.append(this.generateItem('Description', (tempData.description + '(' + tempData.properties.description + ')')));
+           aliasesList.append(this.generateItem('Name', (tempData.name + '(' + tempData.properties.name + ')')));
+           aliasesList.append(this.generateItem('Target', (tempData.target + '(' + tempData.properties.target + ')')));
+
       }.bind(this));
       modalBody.append(aliasesList);
       $('#myModal').modal().show();
