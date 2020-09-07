@@ -635,7 +635,7 @@ App.images = App.images || {
       modalBody.append('<div class="form-group col-lg-12"><hr style="border:1px solid lightgrey;"/></div>');
 
       modalBody.append(this.generateItem('Fingerprint', tempData.fingerprint));
-      modalBody.append(this.generateItem('Filename', tempData.filename));
+      modalBody.append(this.generateItem('Filename', (tempData.filename + '(' + tempData.properties.filename + ')')));
       modalBody.append(this.generateItem('Created at', tempData.created_at));
       modalBody.append(this.generateItem('Uploaded at', tempData.uploaded_at));
       modalBody.append(this.generateItem('Expires at', tempData.expires_at));
