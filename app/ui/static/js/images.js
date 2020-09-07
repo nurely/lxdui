@@ -62,6 +62,7 @@ App.images = App.images || {
         $('#buttonUpdate').on('click', $.proxy(this.getData, this));
         $('#buttonDelete').on('click', $.proxy(this.doDeleteLocalImages, this));
         $('#buttonDownload').on('click', $.proxy(this.doDownload, this));
+        $('#buttonDownloadPaessler').on('click', $.proxy(this.doDownload, this));
         $('#buttonDownloadNightly').on('click', $.proxy(this.doDownload, this));
         $('#buttonLaunchContainers').on('click', $.proxy(this.launchContainers, this));
         $('#buttonBack').on('click', $.proxy(this.switchView, this, 'localList'));
@@ -188,7 +189,7 @@ App.images = App.images || {
         if(this.activeTab=='remotePaessler'){
             var state = this.tablePaesslerRemote.rows({selected:true}).count()>0
             var visibility= !state?'attr':'removeAttr';
-            $('#buttonDownload')[visibility]('disabled', 'disabled');
+            $('#buttonDownloadPaessler')[visibility]('disabled', 'disabled');
             $('#selectAllRemotePaessler').prop('checked',this.tablePaesslerRemote.rows({selected:true}).count()==this.tablePaesslerRemote.rows().count());
             return;
         }
@@ -248,7 +249,7 @@ App.images = App.images || {
                 this.tableRemote.row('#'+row['image']).remove().draw(false);
             }.bind(this));
         } else if(activeTab=='remotePaessler') {
-            this.tableRemote.rows({selected: true}).data().map(function(row){
+            this.tablePaesslerRemote.rows({selected: true}).data().map(function(row){
                 $.ajax({
                     url:App.baseAPI+'image/remotePaessler',
                     type: 'POST',
@@ -259,7 +260,7 @@ App.images = App.images || {
                     }),
                     success: $.proxy(this.onDownloadSuccess, this, row['image'])
                 });
-                this.tableRemote.row('#'+row['image']).remove().draw(false);
+                this.tablePaesslerRemote.row('#'+row['image']).remove().draw(false);
             }.bind(this));
         }
     },
@@ -290,6 +291,7 @@ App.images = App.images || {
     activateScreen: function(screen){
         this.tableLocal.rows({selected:true}).deselect();
         this.tableRemote.rows({selected:true}).deselect();
+        this.tablePaesslerRemote.rows({selected:true}).deselect();
         $('.mg-bottom15').show();
         if(screen==='local'){
             $('#tableImagesLocalWrapper').show();
@@ -370,9 +372,9 @@ App.images = App.images || {
     },
     updateRemotePaesslerTable: function(jsonData){
         this.remotePaesslerData = jsonData;
-        this.tableRemote.clear();
-        this.tableRemote.destroy();
-        this.tableRemote=$('#tablePaesslerImagesRemote').DataTable(App.mergeProps(this.tableSettings, {
+        this.tablePaesslerRemote.clear();
+        this.tablePaesslerRemote.destroy();
+        this.tablePaesslerRemote=$('#tablePaesslerImagesRemote').DataTable(App.mergeProps(this.tableSettings, {
             rowId:'image',
             data : this.remotePaesslerData,
             columns : [
@@ -602,8 +604,8 @@ App.images = App.images || {
         $.get(App.baseAPI+'image/remote/details?alias='+image, $.proxy(this.onGetRemoteDetailsSuccess, this));
     },
     showRemotePaesslerDetails: function(image){
-        this.tableRemote.rows().deselect();
-        this.tableRemote.rows('#'+image).select();
+        this.tablePaesslerRemote.rows().deselect();
+        this.tablePaesslerRemote.rows('#'+image).select();
         $.get(App.baseAPI+'image/remotePaessler/details?alias='+image, $.proxy(this.onGetRemoteDetailsSuccess, this));
     },
     showNightlyDetails: function(image, fingerprint) {
