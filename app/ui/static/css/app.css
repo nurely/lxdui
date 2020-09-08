@@ -53,20 +53,20 @@
 .btn-stop_container:hover
 {
     color: #fff;
-    background-color: #337ab7;
-    border-color: #2e6da4;
+    background-color: #00aeef;
+    border-color: #00aeef;
 }
 .btn-restart_container:hover
 {
     color: #fff;
-    background-color: #f0ad4e;
-    border-color: #eea236;
+    background-color: #f59c00;
+    border-color: #e89400;
 }
 .btn-delete_container:hover
 {
     color: #fff;
-    background-color: #d9534f;
-    border-color: #d43f3a;
+    background-color: #e60060;
+    border-color: #d40058;
 }
 .nav-pills>li>a>span
 {
@@ -74,12 +74,12 @@
 }
 .nav-pills>li.active>a
 {
-    background:#444;
+    background:#050f34;
     color:white;
 }
 .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover
 {
-    background: #FA5D26;
+    background: #f59c00;
     text-decoration: none;
 }
 .nav-pills>li>a
@@ -88,12 +88,12 @@
 }
 .btn-login
 {
-    background: #FFC003;
-    color: white;
+    background: #f59c00;
+    color: grey;
 }
 .nav-pills>li>a:focus,.nav-pills>li>a:hover
 {
-    background:#FA5D26;
+    background:#f59c00;
     color:white;
 }
 
@@ -141,7 +141,7 @@
 }
 .btn-loginlxdui:hover
 {
-    background:#fc8c67;
+    background:#f59c00;
     color:black;
 }
 
@@ -436,12 +436,12 @@ color: #000 !important;
 .container-details-tabs
 
 .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
-    background: #7d7b7b;
+    background: #050f34;
     color: #fff !important;
 }
 
 #exTab2 > ul > li.tab-background.active a {
-    background: #7d7b7b;
+    background: #050f34;
     color: #fff !important;
 }
 
@@ -451,7 +451,7 @@ color: #000 !important;
 }
 
 #exTab2 > ul > li.active > a {
-    background: #7d7b7b;
+    background: #050f34;
     color: #fff !important;
 }
 
@@ -468,7 +468,7 @@ color: #000 !important;
 }
 
 #exTab3 > ul > li.active > a {
-    background: #7d7b7b;
+    background: #050f34;
     color: #fff !important;
 }
 
@@ -757,6 +757,7 @@ color: #000 !important;
 
 .pointer {
     cursor:pointer;
+    color: #e60060;
 }
 
 .show-inline {
