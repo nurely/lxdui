@@ -56,7 +56,7 @@
             {% for container in containers %}
             <tr id="{{container.name}}">
                 <td></td>
-                <td class="td-width"><a href="containers/{{container.name}}" href="#">{{container.name}}</a></td>
+                <td class="td-width"><a class="pointer" href="containers/{{container.name}}" href="#">{{container.name}}</a></td>
                 <td class="status">
                     {% if container.status == 'Running' %}
                     <i class="glyphicon glyphicon-off green"></i>
