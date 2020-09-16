@@ -1,7 +1,7 @@
 APP_NAME = 'LXDUI'
 APP_CLI_CMD = 'lxdui'
 VERSION = '2.1.2'
-GIT_URL = 'https://github.com/AdaptiveScale/lxdui.git'
+GIT_URL = 'https://github.com/nurely/lxdui.git'
 LXD_URL = 'http://localhost:8443'
 LICENSE = 'Apache 2.0'
 AUTHOR = 'AdaptiveScale, Inc.'
@@ -25,7 +25,7 @@ lxdui.images.remote = https://images.linuxcontainers.org
 lxdui.images.remote-paessler = https://lxd2.curve-slinger.com:8443/
 lxdui.lxd.remote.enable = false
 lxdui.lxd.remote = https://lxd2.curve-slinger.com:8443/
-lxdui.lxd.sslverify = false
+lxdui.lxd.sslverify = true
 lxdui.jwt.token.expiration = 1200
 lxdui.jwt.secret.key = AC8d83&21Almnis710sds
 lxdui.jwt.auth.url.rule = /api/user/login
