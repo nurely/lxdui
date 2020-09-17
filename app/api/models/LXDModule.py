@@ -65,7 +65,7 @@ class LXDModule(Base):
             remotePaesslerImagesLink = Config().get(meta.APP_NAME, '{}.images.remote-paessler'.format(meta.APP_NAME.lower()))
             logging.info('Reading remote image list')
             verify = False if Config().get(meta.APP_NAME, '{}.lxd.sslverify'.format(meta.APP_NAME.lower())) == 'false' else True
-            remoteClient = Client(endpoint=remotePaesslerImagesLink, verify=verify)
+            remoteClient = Client(endpoint=remotePaesslerImagesLink, verify=False)
             return remoteImagesList(remoteClient.api.images.aliases.get().json())
         except Exception as e:
             logging.error('Failed to get remote container images: ')
@@ -95,7 +95,7 @@ class LXDModule(Base):
         try:
             remotePaesslerImagesLink = Config().get(meta.APP_NAME, '{}.images.remote-paessler'.format(meta.APP_NAME.lower()))
             verify = False if Config().get(meta.APP_NAME, '{}.lxd.sslverify'.format(meta.APP_NAME.lower())) == 'false' else True
-            remoteClient = Client(endpoint=remotePaesslerImagesLink, verify=verify)
+            remoteClient = Client(endpoint=remotePaesslerImagesLink, verify=False)
             fingerprint = remoteClient.api.images.aliases[alias].get().json()['metadata']['target']
             return remoteClient.api.images[fingerprint].get().json()['metadata']
         except Exception as e:
