@@ -8,6 +8,12 @@ from pylxd import Client
 import requests
 import logging
 
+import os
+import os.path
+from collections import namedtuple
+CertRemotePaessler = namedtuple('Cert', ['cert', 'key'])  # pragma: no cover
+
+
 logging = logging.getLogger(__name__)
 
 class LXDModule(Base):
@@ -65,7 +71,12 @@ class LXDModule(Base):
             remotePaesslerImagesLink = Config().get(meta.APP_NAME, '{}.images.remote-paessler'.format(meta.APP_NAME.lower()))
             logging.info('Reading remote image list')
             verify = False if Config().get(meta.APP_NAME, '{}.lxd.sslverify'.format(meta.APP_NAME.lower())) == 'false' else True
-            remoteClient = Client(endpoint=remotePaesslerImagesLink, verify=False)
+            CERTS_PATH = Config().get(meta.APP_NAME, '{}.conf.dir'.format(meta.APP_NAME.lower()))
+            cert = CertRemotePaessler(
+                cert=os.path.expanduser(os.path.join(CERTS_PATH, 'client.crt')),
+                key=os.path.expanduser(os.path.join(CERTS_PATH, 'client.key'))
+            )
+            remoteClient = Client(endpoint=remotePaesslerImagesLink, verify=verify, cert=cert)
             return remoteImagesList(remoteClient.api.images.aliases.get().json())
         except Exception as e:
             logging.error('Failed to get remote container images: ')
