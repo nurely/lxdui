@@ -1,4 +1,4 @@
-name: pi-lxdui
+name: hive
 version: '2.0'
 summary: Web UI for Linux containers based on LXD/LXC.
 description: |
@@ -14,7 +14,6 @@ apps:
       LC_ALL: C.UTF-8
       LANG: C.UTF-8
     plugs:
-      - lxd
       - network
       - network-bind
       - network-control
@@ -27,7 +26,6 @@ apps:
       LC_ALL: C.UTF-8
       LANG: C.UTF-8
     plugs:
-      - lxd
       - network
       - network-bind
       - network-control

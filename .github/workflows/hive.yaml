@@ -1,4 +1,4 @@
-name: PI-LXDUI-SNAP
+name: HIVE-SNAP
 on:
   push:
     branches: [ master ]
