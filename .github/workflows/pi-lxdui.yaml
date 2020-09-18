@@ -6,8 +6,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/PI-LXDUI
-        cd ..
+    - uses: /nurely/lxdui/
     - name: Setup Snapcraft
       run: |
         sudo snap install snapcraft --classic
