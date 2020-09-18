@@ -1,4 +1,4 @@
-name: PI-LXDUI
+name: PI-LXDUI-SNAP
 on:
   push:
     branches: [ master ]
