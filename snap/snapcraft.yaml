@@ -1,4 +1,4 @@
-name: lxdui
+name: pi-lxdui
 version: '2.0'
 summary: Web UI for Linux containers based on LXD/LXC.
 description: |
