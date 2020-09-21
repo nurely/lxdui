@@ -9,8 +9,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Setup Snapcraft
       run: |
-        sudo snap install snapcraft --classic
-        echo "$SNAP_TOKEN" | snapcraft login --with -
+        echo "$SNAP_TOKEN" | sudo snapcraft login --with -
         snapcraft
         snapcraft upload --release=stable *.snap
       env:
